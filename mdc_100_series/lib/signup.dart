@@ -22,8 +22,6 @@ class _SignUpPage extends State<SignUp> {
           padding: EdgeInsets.symmetric(horizontal: 24.0),
           children: <Widget>[
             SizedBox(height: 80.0),
-            // TODO: Wrap Username with AccentColorOverride (103)
-            // TODO: Remove filled: true values (103)
             Form(
               key: _formKey1,
               child: TextFormField(
@@ -43,6 +41,7 @@ class _SignUpPage extends State<SignUp> {
             Form(
               key: _formKey2,
               child: TextFormField(
+                obscureText: true,
                 validator: (value) {
                   if (value.isEmpty) {
                     return 'Please enter Password';
@@ -59,6 +58,7 @@ class _SignUpPage extends State<SignUp> {
             Form(
               key: _formKey3,
               child: TextFormField(
+                obscureText: true,
                 validator: (value) {
                   if (value.isEmpty) {
                     return 'Please enter Confirm Password';

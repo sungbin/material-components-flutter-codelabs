@@ -35,9 +35,7 @@ class HomePage extends StatelessWidget {
     return products.map((product) {
       return Card(
         clipBehavior: Clip.antiAlias,
-        // TODO: Adjust card heights (103)
         child: Column(
-          // TODO: Center items on the card (103)
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             AspectRatio(
@@ -52,19 +50,14 @@ class HomePage extends StatelessWidget {
               child: Padding(
                 padding: EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 8.0),
                 child: Column(
-                  // TODO: Align labels to the bottom and center (103)
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  // TODO: Change innermost Column (103)
                   children: <Widget>[
-                    // TODO: Handle overflowing labels (103)
-                    // TODO(larche): Make headline6 when available
                     Text(
                       product.name,
                       style: theme.textTheme.title,
                       maxLines: 1,
                     ),
                     SizedBox(height: 8.0),
-                    // TODO(larche): Make subtitle2 when available
                     Text(
                       formatter.format(product.price),
                       style: theme.textTheme.body2,
@@ -81,20 +74,18 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Return an AsymmetricView (104)
-    // TODO: Pass Category variable to AsymmetricView (104)
 
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(
-            Icons.menu,
-            semanticLabel: 'menu',
-          ),
-          onPressed: () {
-            print('Menu button');
-          },
-        ),
+        // leading: IconButton(
+        //   icon: Icon(
+        //     Icons.menu,
+        //     semanticLabel: 'menu',
+        //   ),
+        //   onPressed: () {
+        //     print('Menu button');
+        //   },
+        // ),
         title: Text('SHRINE'),
         actions: <Widget>[
           IconButton(
@@ -124,6 +115,27 @@ class HomePage extends StatelessWidget {
           childAspectRatio: 8.0 / 9.0,
           children: _buildGridCards(context),
         ),
+      ),
+      drawer: Drawer(
+        child: ListView(
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.fromLTRB(20, 100, 20, 20),
+            child: Text(
+              'Pages',
+              style: TextStyle(fontSize: 20, color: Colors.white),
+            ),
+            color: Theme.of(context).primaryColor,
+          ),
+          ListTile(
+            leading: Icon(Icons.home, color: Theme.of(context).primaryColor,),
+          ),
+          ListTile(
+            title: Text("Item 2"),
+            trailing: Icon(Icons.arrow_forward),
+          ),
+        ],
+      ),
       ),
     );
   }
