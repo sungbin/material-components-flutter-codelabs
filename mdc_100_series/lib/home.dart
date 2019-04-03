@@ -13,80 +13,65 @@
 // limitations under the License.
 
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'cards.dart';
 
-import 'model/products_repository.dart';
-import 'model/product.dart';
+class DrawerItem {
+  String title;
+  IconData icon;
+  DrawerItem(this.title, this.icon);
+}
 
-class HomePage extends StatelessWidget {
-  // TODO: Add a variable for Category (104)
+class HomePage extends StatefulWidget {
+  final drawerItems = [
+    DrawerItem("Home", Icons.home),
+    DrawerItem("Search", Icons.search),
+    DrawerItem("Favorite Hotel", Icons.location_city),
+    DrawerItem("Ranking", Icons.insert_chart),
+    DrawerItem("My Page", Icons.person),
+  ];
+  _HomePageState createState() => _HomePageState();
+}
 
-  List<Card> _buildGridCards(BuildContext context) {
-    List<Product> products = ProductsRepository.loadProducts(Category.all);
 
-    if (products == null || products.isEmpty) {
-      return const <Card>[];
+class _HomePageState extends State<HomePage> {
+  int _selectedDrawerIndex = 0;
+  _getDrawerItemWidget(int pos) {
+    switch (pos) {
+      case 0:
+        return Cards();
+      case 1:
+        // return new SecondFragment();
+      case 2:
+        // return new ThirdFragment();
+
+      default:
+        return new Text("Error");
     }
+  }
 
-    final ThemeData theme = Theme.of(context);
-    final NumberFormat formatter = NumberFormat.simpleCurrency(
-        locale: Localizations.localeOf(context).toString());
-
-    return products.map((product) {
-      return Card(
-        clipBehavior: Clip.antiAlias,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            AspectRatio(
-              aspectRatio: 18 / 11,
-              child: Image.asset(
-                product.assetName,
-                package: product.assetPackage,
-                fit: BoxFit.fitWidth,
-              ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      product.name,
-                      style: theme.textTheme.title,
-                      maxLines: 1,
-                    ),
-                    SizedBox(height: 8.0),
-                    Text(
-                      formatter.format(product.price),
-                      style: theme.textTheme.body2,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    }).toList();
+  _onSelectItem(int index) {
+    setState(() => _selectedDrawerIndex = index);
+    Navigator.of(context).pop(); // close the drawer
   }
 
   @override
   Widget build(BuildContext context) {
-
+    var drawerOptions = <Widget>[];
+    for (var i = 0; i < widget.drawerItems.length; i++) {
+      var d = widget.drawerItems[i];
+      drawerOptions.add(
+        new ListTile(
+          leading: new Icon(d.icon),
+          title: new Text(d.title),
+          selected: i == _selectedDrawerIndex,
+          onTap: () => _onSelectItem(i),
+        )
+      );
+    }
     return Scaffold(
       appBar: AppBar(
-        // leading: IconButton(
-        //   icon: Icon(
-        //     Icons.menu,
-        //     semanticLabel: 'menu',
-        //   ),
-        //   onPressed: () {
-        //     print('Menu button');
-        //   },
-        // ),
-        title: Text('SHRINE'),
+        title: Text('Main'),
+        centerTitle: true,
         actions: <Widget>[
           IconButton(
             icon: Icon(
@@ -109,33 +94,17 @@ class HomePage extends StatelessWidget {
         ],
       ),
       body: Center(
-        child: GridView.count(
-          crossAxisCount: 2,
-          padding: EdgeInsets.all(16.0),
-          childAspectRatio: 8.0 / 9.0,
-          children: _buildGridCards(context),
-        ),
+        // child: _getCardView(context),
+        child: _getDrawerItemWidget(_selectedDrawerIndex),
       ),
       drawer: Drawer(
-        child: ListView(
-        children: <Widget>[
-          Container(
-            padding: EdgeInsets.fromLTRB(20, 100, 20, 20),
-            child: Text(
-              'Pages',
-              style: TextStyle(fontSize: 20, color: Colors.white),
-            ),
-            color: Theme.of(context).primaryColor,
-          ),
-          ListTile(
-            leading: Icon(Icons.home, color: Theme.of(context).primaryColor,),
-          ),
-          ListTile(
-            title: Text("Item 2"),
-            trailing: Icon(Icons.arrow_forward),
-          ),
-        ],
-      ),
+        child: Column(
+          children: <Widget>[
+            UserAccountsDrawerHeader(
+                accountName: Text("Pages", style: TextStyle(fontSize: 20),), accountEmail: null),
+            Column(children: drawerOptions)
+          ],
+        ),
       ),
     );
   }
