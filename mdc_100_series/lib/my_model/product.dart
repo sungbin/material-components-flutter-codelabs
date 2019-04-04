@@ -14,29 +14,29 @@
 
 import 'package:flutter/foundation.dart';
 
-enum Category { all, accessories, clothing, home, }
-
 class Product {
   const Product({
-    @required this.category,
     @required this.id,
-    @required this.isFeatured,
     @required this.name,
-    @required this.price,
-  })  : assert(category != null),
-        assert(id != null),
-        assert(isFeatured != null),
+    @required this.phone,
+    @required this.star_count,
+    @required this.location,
+    @required this.description
+  })  : assert(id != null),
         assert(name != null),
-        assert(price != null);
+        assert(phone != null),
+        assert(star_count != null),
+        assert(location != null),
+        assert(description != null);
 
-  final Category category;
   final int id;
-  final bool isFeatured;
   final String name;
-  final int price;
+  final String phone;
+  final int star_count;
+  final String location;
+  final description;
 
-  String get assetName => '$id-0.jpg';
-  String get assetPackage => 'shrine_images';
+  String get assetName => 'assets/hotels/$id.jpg';
 
   @override
   String toString() => "$name (id=$id)";

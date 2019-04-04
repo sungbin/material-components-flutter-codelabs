@@ -14,6 +14,8 @@
 
 import 'package:flutter/material.dart';
 import 'cards.dart';
+import 'my_model/products_repository.dart';
+import 'my_model/product.dart';
 
 class DrawerItem {
   String title;
@@ -35,22 +37,32 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedDrawerIndex = 0;
+  List<String> _appbarTitleList = ["Main","Search","Favortie Hotels", "Hotel Users Ranking", "My Page"];
+  Text _appbarTitle = Text('Main');
   _getDrawerItemWidget(int pos) {
     switch (pos) {
       case 0:
-        return Cards();
+        List<Product> products = ProductsRepository.loadProducts();
+        return 
+        //products.first.assetName;
+        //Text('case 0');
+        Cards();
       case 1:
-        // return new SecondFragment();
+        return Text('case 1');
       case 2:
-        // return new ThirdFragment();
-
+        return Text('case 2');
+      case 3:
+        return Text('case 3');
+      case 4:
+        return Text('case 4');
       default:
-        return new Text("Error");
+        return Text('Error');
     }
   }
 
   _onSelectItem(int index) {
     setState(() => _selectedDrawerIndex = index);
+    _appbarTitle = Text(_appbarTitleList[index]);
     Navigator.of(context).pop(); // close the drawer
   }
 
@@ -60,9 +72,9 @@ class _HomePageState extends State<HomePage> {
     for (var i = 0; i < widget.drawerItems.length; i++) {
       var d = widget.drawerItems[i];
       drawerOptions.add(
-        new ListTile(
-          leading: new Icon(d.icon),
-          title: new Text(d.title),
+         ListTile(
+          leading: Icon(d.icon),
+          title: Text(d.title),
           selected: i == _selectedDrawerIndex,
           onTap: () => _onSelectItem(i),
         )
@@ -70,7 +82,7 @@ class _HomePageState extends State<HomePage> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: Text('Main'),
+        title: _appbarTitle,
         centerTitle: true,
         actions: <Widget>[
           IconButton(
