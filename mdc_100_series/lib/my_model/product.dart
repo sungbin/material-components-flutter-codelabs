@@ -15,7 +15,7 @@
 import 'package:flutter/foundation.dart';
 
 class Product {
-  const Product({
+  Product({
     @required this.id,
     @required this.name,
     @required this.phone,
@@ -34,10 +34,13 @@ class Product {
   final String phone;
   final int star_count;
   final String location;
-  final description;
+  final String description;
+  bool is_favorite = false;
 
   String get assetName => 'assets/hotels/$id.jpg';
 
   @override
   String toString() => "$name (id=$id)";
+
+  void toggle() => is_favorite = !is_favorite;
 }

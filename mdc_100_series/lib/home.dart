@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
   _getDrawerItemWidget(int pos) {
     switch (pos) {
       case 0:
-        List<Product> products = ProductsRepository.loadProducts();
+        // List<Product> products = ProductsRepository.loadProducts();
         return 
         //products.first.assetName;
         //Text('case 0');
