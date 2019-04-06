@@ -30,7 +30,11 @@ class _RankingState extends State<Ranking> {
         title: Text("Hotel Users Ranking"),
       ),
       body: Center(
-        child: SimpleBarChart(_createSampleData([productList0.length,productList1.length,productList2.length,])),
+        child: 
+        Padding(
+          padding: EdgeInsets.fromLTRB(10, 200, 10, 200),
+          child: SimpleBarChart(_createSampleData([productList0.length,productList1.length,productList2.length,])),
+        )
       ),
     );
   }

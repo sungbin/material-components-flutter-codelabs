@@ -13,8 +13,8 @@ class _MyPageState extends State<MyPage> {
   @override
   Widget build(BuildContext context) {
     List<Product> favorite_products = widget._products.where((Product p) {
-        return p.is_favorite;
-      }).toList();
+      return p.is_favorite;
+    }).toList();
     return Scaffold(
       backgroundColor: Colors.deepPurpleAccent,
       appBar: AppBar(
@@ -22,6 +22,7 @@ class _MyPageState extends State<MyPage> {
       ),
       body: Center(
         child: CarouselSlider(
+          autoPlay: true,
           height: 250.0,
           items: favorite_products.map((product) {
             return Builder(
@@ -36,26 +37,32 @@ class _MyPageState extends State<MyPage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                    Stack(
-                      fit: StackFit.loose,
-                      children: <Widget>[
-                        AspectRatio(
-                          aspectRatio: 16 / 9,
-                          child:  Image.asset(
+                      Text('Auto Playing Carousel'),
+                      Stack(
+                        fit: StackFit.loose,
+                        children: <Widget>[
+                          AspectRatio(
+                            aspectRatio: 16 / 9,
+                            child: Image.asset(
                               product.assetName,
                               fit: BoxFit.fitWidth,
                             ),
-                        ),
-                        Positioned(
-                          right: 10,
-                          bottom: 10,
-                          child: Text(product.name,style: TextStyle(color: Colors.white,fontSize: 26.0,fontWeight: FontWeight.bold),),
-                          
-                        )
-                        
-                      ],
-                    )
-                  ],),
+                          ),
+                          Positioned(
+                            right: 10,
+                            bottom: 10,
+                            child: Text(
+                              product.name,
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 26.0,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
                 );
               },
             );
@@ -64,5 +71,4 @@ class _MyPageState extends State<MyPage> {
       ),
     );
   }
-
 }

@@ -129,6 +129,21 @@ List<Widget> drawStars() {
   return val;
 }
 
+Future<void> _warnning(String content) async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false, // user must tap button!
+    builder: (BuildContext context) {
+      return AlertDialog(
+        backgroundColor: Colors.red,
+        title: Text('Warnning!',style: TextStyle(color: Colors.lightGreen),),
+        content: Text(content,style: TextStyle(color: Colors.white),),
+        );
+    }
+  );
+}
+
+
 Future<void> _neverSatisfied() async {
   return showDialog<void>(
     context: context,
@@ -194,7 +209,7 @@ Future<void> _neverSatisfied() async {
                   ],
                 ),
                 SizedBox(width: 24,),
-                switch_on? Text('no specific'): Column(
+                switch_on? Text('No specific'): Column(
                   children: <Widget>[
                     Text(formatDate(in_selectedDate, [yyyy, '.', mm, '.', dd, ' (', DD,')']) +' ' + formatTime(in_selectedTime) ,style: TextStyle(fontSize: 12.0),),
                     Text(formatDate(out_selectedDate, [yyyy, '.', mm, '.', dd, ' (', DD,')']) +' '+ formatTime(out_selectedTime) ,style: TextStyle(fontSize: 12.0),),
@@ -727,7 +742,11 @@ Future<void> _neverSatisfied() async {
                     SizedBox(height: 40,),
                     RaisedButton(
                       onPressed: () {
-                        if(radio1 != -1 && radio2 != -1)
+                        if(radio1 == -1) {
+                          _warnning("Set your location");
+                        } else if(radio2 == -1) {
+                          _warnning("Set your room");
+                        } else
                           _neverSatisfied();
                       },
                       textColor: Colors.white,
@@ -766,15 +785,3 @@ Future<void> _neverSatisfied() async {
     return h.toString() + ':' + time.minute.toString() + ' ' + am;
   }
 }
-
-/*
-Checkbox(
-value: location0,
-onChanged: (bool value) {
-setState(() {
-location0 = value;
-});
-},
-),
-Text('Seoul'),
-*/
