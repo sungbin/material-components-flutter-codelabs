@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:date_format/date_format.dart';
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 
 class Search extends StatefulWidget {
 
@@ -14,32 +16,118 @@ class _SearchPage extends State<Search> {
 
   int radio2 = -1; //Single, Double, Family
   final List<String> selected_people = ['Single','Double','Family'];
-  
-  bool location0 = false;
-  bool location1 = false;
-  bool location2 = false;
-  bool location3 = false;
-  bool location4 = false;
+  List<bool> num_selected_star = List<bool>();
+
   bool switch_on = true;
 
   DateTime _date = DateTime.now();
   TimeOfDay _time = TimeOfDay.now();
   double _sliderValue = 0.0;
 
-  Future<Null> _selectDate(BuildContext context) async {
-    final DateTime picked = await showDatePicker(
-        context: context,
-        initialDate: _date,
-        firstDate: DateTime(2016),
-        lastDate: DateTime(2019)
-    );
-    if(picked != null && picked != _date) {
-      print('Date selected: ${_date.toString()}');
-      setState(() {
-        _date =picked;
-      });
+Widget getStars(int count) { // 
+  List<Widget> list = List<Widget>();
+  for(int i = 0; i < count; i++)
+    list.add(Icon(Icons.star,color: Colors.yellow,size: 12,));
+  return Row(
+    children: list,
+  );
+}
+
+List<Widget> drawStars() {
+  int true_count = 0;
+  List<Widget> val = List<Widget>(); 
+
+  for(int i = 0; i < num_selected_star.length; i++){
+    if(num_selected_star[i])
+      true_count++;
+  }
+  int line_count = ((true_count-1) ~/ 2)+1;
+
+  List<Widget> stars_group = List<Widget>();
+  for(int i = 0; i < num_selected_star.length; i++){
+    if(num_selected_star[i]) {
+      stars_group.add(getStars(i+1));
     }
   }
+  switch (true_count) {
+    case 0:
+      val.add(Text('No Seleted'));
+      break;
+    case 1:
+      val.addAll(stars_group);
+      break;
+    case 2:
+      val.add(stars_group[0]);
+      val.add(Text('/'));
+      val.add(stars_group[1]);
+      break;
+    case 3:
+      val.add(
+        Column(
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                stars_group[0],
+                Text('/'),
+                stars_group[1],
+              ],
+            ),
+            stars_group[2],
+          ],
+        )
+      );
+      break;
+    case 4:
+      val.add(
+        Column(
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                stars_group[0],
+                Text('/'),
+                stars_group[1],
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                stars_group[2],
+                Text('/'),
+                stars_group[3],
+              ],
+            ),
+          ],
+        )
+      );
+      break;
+    case 5:
+      val.add(
+        Column(
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                stars_group[0],
+                Text('/'),
+                stars_group[1],
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                stars_group[2],
+                Text('/'),
+                stars_group[3],
+              ],
+            ),
+            stars_group[4],
+          ],
+        )
+      );
+      break;
+    default:
+  }
+  
+
+  return val;
+}
 
 Future<void> _neverSatisfied() async {
   return showDialog<void>(
@@ -47,14 +135,24 @@ Future<void> _neverSatisfied() async {
     barrierDismissible: false, // user must tap button!
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text('Please check your choice :)'),
+        backgroundColor: Colors.blue,
+
+        title: Container(
+          width: double.infinity,
+          height: 60,
+          child: Text('Please check your choice :)',style: TextStyle(color: Colors.white),),
+          color: Colors.blue,
+        ),
+        
+        
           // color: Theme.of(context).primaryColor,
-        content: Padding(
-          padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
+        content: Container(
+          width: double.infinity,
+          padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
+          color: Colors.white,
           child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Divider(),
             Row(
               children: <Widget>[
                 Icon(Icons.location_on,color: Theme.of(context).primaryColorLight,),
@@ -74,26 +172,40 @@ Future<void> _neverSatisfied() async {
             ),
             SizedBox(height: 30,),
             Row(
-              children: <Widget>[
-                Icon(Icons.star,color: Colors.yellow,),
-                Expanded(
-                  child: Text(selected_people[radio2],textAlign: TextAlign.center,),
-                )
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                  Icon(Icons.star,size: 30.0,color: Colors.yellow.shade900,),
+                  SizedBox(width: 40.0,),
+                  Row(
+                    children: drawStars()),
               ],
             ),
             SizedBox(height: 30,),
             Row(
               children: <Widget>[
-                Icon(Icons.credit_card,color: Theme.of(context).primaryColorLight,),
-                Expanded(
-                  child: Text(selected_people[radio2],textAlign: TextAlign.center,),
-                )
+                Icon(Icons.calendar_today,color: Theme.of(context).primaryColorLight,), //Calendar
+                SizedBox(width: 8,),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text('in ',style: TextStyle(fontSize: 12.0,fontWeight: FontWeight.bold),),
+                    Text('out',style: TextStyle(fontSize: 12.0,fontWeight: FontWeight.bold),),
+                  ],
+                ),
+                SizedBox(width: 24,),
+                switch_on? Text('no specific'): Column(
+                  children: <Widget>[
+                    Text(formatDate(in_selectedDate, [yyyy, '.', mm, '.', dd, ' (', DD,')']) +' ' + formatTime(in_selectedTime) ,style: TextStyle(fontSize: 12.0),),
+                    Text(formatDate(out_selectedDate, [yyyy, '.', mm, '.', dd, ' (', DD,')']) +' '+ formatTime(out_selectedTime) ,style: TextStyle(fontSize: 12.0),),
+                  ],
+                ),
               ],
             ),
             Expanded(
               child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 RaisedButton(
                 child: Text('Search',style: TextStyle(color: Colors.white),textAlign: TextAlign.left,),
@@ -119,10 +231,61 @@ Future<void> _neverSatisfied() async {
     },
   );
 }
+  DateTime in_selectedDate = DateTime.now();
+  Future<Null> in_selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: in_selectedDate,
+        firstDate: DateTime(2015, 8),
+        lastDate: DateTime(2101));
+    if (picked != null && picked != in_selectedDate)
+      setState(() {
+        in_selectedDate = picked;
+      });
+  }
+  TimeOfDay in_selectedTime =TimeOfDay.now();
+  Future<void> in_selectTime(BuildContext context) async {
+    final TimeOfDay picked = await showTimePicker(
+      context: context,
+      initialTime: in_selectedTime,
+    );
+    if (picked != null && picked != in_selectedTime)
+      setState(() {
+        in_selectedTime = picked;
+      });
+  }
+  
+  DateTime out_selectedDate = DateTime.now();
+  Future<Null> out_selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: out_selectedDate,
+        firstDate: DateTime(2015, 8),
+        lastDate: DateTime(2101));
+    if (picked != null && picked != out_selectedDate)
+      setState(() {
+        out_selectedDate = picked;
+      });
+  }
+  TimeOfDay out_selectedTime =TimeOfDay.now();
+  Future<void> out_selectTime(BuildContext context) async {
+    final TimeOfDay picked = await showTimePicker(
+      context: context,
+      initialTime: out_selectedTime,
+    );
+    if (picked != null && picked != out_selectedTime)
+      setState(() {
+        out_selectedTime = picked;
+      });
+  }
 
   @override
   Widget build(BuildContext context) {
-    // return Text('Hi!');
+    num_selected_star.add(false);
+    num_selected_star.add(false);
+    num_selected_star.add(false);
+    num_selected_star.add(false);
+    num_selected_star.add(false);
     return Scaffold(
       appBar: AppBar(
         title: Text("Search"),
@@ -295,10 +458,10 @@ Future<void> _neverSatisfied() async {
                         width: 140.0,
                       ),
                       Checkbox(
-                        value: location0,
+                        value: num_selected_star[0],
                         onChanged: (bool value) {
                           setState(() {
-                            location0 = value;
+                            num_selected_star[0] = value;
                           });
                         },
                       ),
@@ -311,10 +474,10 @@ Future<void> _neverSatisfied() async {
                         width: 140.0,
                       ),
                       Checkbox(
-                        value: location1,
+                        value: num_selected_star[1],
                         onChanged: (bool value) {
                           setState(() {
-                            location1 = value;
+                            num_selected_star[1] = value;
                           });
                         },
                       ),
@@ -328,10 +491,10 @@ Future<void> _neverSatisfied() async {
                         width: 140.0,
                       ),
                       Checkbox(
-                        value: location2,
+                        value: num_selected_star[2],
                         onChanged: (bool value) {
                           setState(() {
-                            location2 = value;
+                            num_selected_star[2] = value;
                           });
                         },
                       ),
@@ -346,10 +509,10 @@ Future<void> _neverSatisfied() async {
                         width: 140.0,
                       ),
                       Checkbox(
-                        value: location3,
+                        value: num_selected_star[3],
                         onChanged: (bool value) {
                           setState(() {
-                            location3 = value;
+                            num_selected_star[3] = value;
                           });
                         },
                       ),
@@ -365,10 +528,10 @@ Future<void> _neverSatisfied() async {
                         width: 140.0,
                       ),
                       Checkbox(
-                        value: location4,
+                        value: num_selected_star[4],
                         onChanged: (bool value) {
                           setState(() {
-                            location4 = value;
+                            num_selected_star[4] = value;
                           });
                         },
                       ),
@@ -416,15 +579,123 @@ Future<void> _neverSatisfied() async {
                     ]
                 ),
               ),
-              Text('Date Selected: ${_date.toString()}'),
-              RaisedButton(
-                child: Text('Set!'),
-                onPressed: (){_selectDate(context);},
-              )
+              /* Column 2 -> row 2 -> column 2 */
+              Column(
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Row(
+                              children: <Widget>[
+                                Icon(Icons.calendar_today,color: Colors.pink,),
+                                Text('check-in'),
+                              ],
+                            ),
+                            SizedBox(height: 8,),
+                            Text(formatDate(in_selectedDate, [yyyy, '.', mm, '.', dd, ' (', DD,')']),style: TextStyle(fontSize: 12,color: Colors.grey),),
+                            SizedBox(height: 2,),
+                            Text(formatTime(in_selectedTime),style: TextStyle(fontSize: 12,color: Colors.grey),),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
+                        child: Column(
+                          children: <Widget>[
+                            ButtonTheme(
+                              minWidth: 150.0,
+                              height: 30.0,
+                              child: RaisedButton(
+                                onPressed: () => switch_on? null : in_selectDate(context),
+                                child: Text('select date'),
+                                color: Theme.of(context).primaryColorLight,
+                              ),
+                              buttonColor: Colors.blue,
+                            ),
+                            
+                            ButtonTheme(
+                              minWidth: 150.0,
+                              height: 30.0,
+                              child: RaisedButton(
+                                onPressed: () => switch_on? null : in_selectTime(context),
+                                child: Text('select time'),
+                                color: Theme.of(context).primaryColorLight,
+                              ),
+                              buttonColor: Colors.blue,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              SizedBox(height: 30.0,),
+              Column(
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Row(
+                              children: <Widget>[
+                                Icon(Icons.calendar_today,color: Colors.pink,),
+                                Text('check-out'),
+                              ],
+                            ),
+                            SizedBox(height: 8,),
+                            Text(formatDate(out_selectedDate, [yyyy, '.', mm, '.', dd, ' (', DD,')']),style: TextStyle(fontSize: 12,color: Colors.grey),),
+                            SizedBox(height: 2,),
+                            Text(formatTime(out_selectedTime),style: TextStyle(fontSize: 12,color: Colors.grey),),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
+                        child: Column(
+                          children: <Widget>[
+                            ButtonTheme(
+                              minWidth: 150.0,
+                              height: 30.0,
+                              child: RaisedButton(
+                                onPressed: () => switch_on? null : out_selectDate(context),
+                                child: Text('select date'),
+                                color: Theme.of(context).primaryColorLight,
+                              ),
+                              buttonColor: Colors.blue,
+                            ),
+                            
+                            ButtonTheme(
+                              minWidth: 150.0,
+                              height: 30.0,
+                              child: RaisedButton(
+                                onPressed: () => switch_on? null : out_selectTime(context),
+                                child: Text('select time'),
+                                color: Theme.of(context).primaryColorLight,
+                              ),
+                              buttonColor: Colors.blue,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              SizedBox(height: 45.0,),
             ],
           )
         ),
-        Divider(height: 0.5,color: Colors.black,),
+        Divider(height: 0.5,color: Colors.grey,),
         Container (
           color: Colors.white,
           child: Column(
@@ -452,10 +723,12 @@ Future<void> _neverSatisfied() async {
                       },
                       value: _sliderValue,
                     ),
+                    Text(_sliderValue.toInt().toString()),
                     SizedBox(height: 40,),
                     RaisedButton(
                       onPressed: () {
-                        _neverSatisfied();
+                        if(radio1 != -1 && radio2 != -1)
+                          _neverSatisfied();
                       },
                       textColor: Colors.white,
                       padding: const EdgeInsets.all(0.0),
@@ -482,6 +755,15 @@ Future<void> _neverSatisfied() async {
     );
 
     
+  }
+  String formatTime(TimeOfDay time) {
+    int h = time.hour;
+    String am = 'am';
+    if(h>=12) {
+      h -= 12;
+      am = 'pm';
+    }
+    return h.toString() + ':' + time.minute.toString() + ' ' + am;
   }
 }
 

@@ -48,7 +48,8 @@ class _HomePageState extends State<HomePage> {
   Cards _cards = null;
   Search _search = null;
   Favorite _favorite_page = null;
-  Ranking ranking_page = null;
+  Ranking _ranking_page = null;
+  MyPage _myPage = null;
   var drawerOptions = <Widget>[];
 
   _onSelectItem(int index) {
@@ -69,10 +70,16 @@ class _HomePageState extends State<HomePage> {
           MaterialPageRoute(builder: (context) => _favorite_page),
         );
       } else if(index == 3) {
-        ranking_page ??= Ranking(products);
+        _ranking_page ??= Ranking(products);
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ranking_page),
+          MaterialPageRoute(builder: (context) => _ranking_page),
+        );
+      } else if(index == 4) {
+        _myPage ??= MyPage(products);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => _myPage),
         );
       }
       _selectedDrawerIndex = 0;
@@ -114,7 +121,13 @@ class _HomePageState extends State<HomePage> {
               semanticLabel: 'search',
             ),
             onPressed: () {
-              print('Search button');
+              setState(() {
+                _search ??= Search();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => _search),
+                );
+              });
             },
           ),
           IconButton(
