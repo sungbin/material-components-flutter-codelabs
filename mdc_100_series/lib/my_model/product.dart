@@ -42,5 +42,7 @@ class Product {
   @override
   String toString() => "$name (id=$id)";
 
-  void toggle() => is_favorite = !is_favorite;
+  void toggle() {
+    is_favorite = (!is_favorite);
+  }
 }

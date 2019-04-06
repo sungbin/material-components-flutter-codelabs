@@ -16,7 +16,7 @@ import 'product.dart';
 
 class ProductsRepository {
   static List<Product> loadProducts({bool favorite :false}) {
-    var allProducts = <Product> [
+    List<Product> allProducts = <Product> [
       Product(
         id: 0,
         star_count: 2,

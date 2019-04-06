@@ -2,6 +2,7 @@ name: Shrine
 description: Learn how to use Material for structure and layout.
 
 dependencies:
+  charts_flutter: ^0.6.0
   flutter:
     sdk: flutter
   intl: ^0.15.6

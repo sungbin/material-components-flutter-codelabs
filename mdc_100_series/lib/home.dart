@@ -16,6 +16,10 @@ import 'package:flutter/material.dart';
 import 'cards.dart';
 import 'my_model/products_repository.dart';
 import 'my_model/product.dart';
+import 'search.dart';
+import 'favorite.dart';
+import 'ranking.dart';
+import 'mypage.dart';
 
 class DrawerItem {
   String title;
@@ -36,39 +40,48 @@ class HomePage extends StatefulWidget {
 
 
 class _HomePageState extends State<HomePage> {
+
+
   int _selectedDrawerIndex = 0;
   List<String> _appbarTitleList = ["Main","Search","Favortie Hotels", "Hotel Users Ranking", "My Page"];
-  Text _appbarTitle = Text('Main');
-  _getDrawerItemWidget(int pos) {
-    switch (pos) {
-      case 0:
-        // List<Product> products = ProductsRepository.loadProducts();
-        return 
-        //products.first.assetName;
-        //Text('case 0');
-        Cards();
-      case 1:
-        return Text('case 1');
-      case 2:
-        return Text('case 2');
-      case 3:
-        return Text('case 3');
-      case 4:
-        return Text('case 4');
-      default:
-        return Text('Error');
-    }
-  }
+  final List<Product> products = ProductsRepository.loadProducts();
+  Cards _cards = null;
+  Search _search = null;
+  Favorite _favorite_page = null;
+  Ranking ranking_page = null;
+  var drawerOptions = <Widget>[];
 
   _onSelectItem(int index) {
-    setState(() => _selectedDrawerIndex = index);
-    _appbarTitle = Text(_appbarTitleList[index]);
-    Navigator.of(context).pop(); // close the drawer
+    setState(() {
+      _selectedDrawerIndex = index;
+      Navigator.of(context).pop(); // close the drawer
+
+      if(index == 1) {
+        _search ??= Search();
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => _search),
+        );
+      } else if(index == 2) {
+        _favorite_page ??= Favorite(products);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => _favorite_page),
+        );
+      } else if(index == 3) {
+        ranking_page ??= Ranking(products);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ranking_page),
+        );
+      }
+      _selectedDrawerIndex = 0;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    var drawerOptions = <Widget>[];
+    drawerOptions = <Widget>[];
     for (var i = 0; i < widget.drawerItems.length; i++) {
       var d = widget.drawerItems[i];
       drawerOptions.add(
@@ -80,9 +93,19 @@ class _HomePageState extends State<HomePage> {
         )
       );
     }
+
+    _cards ??=Cards(products);
     return Scaffold(
-      appBar: AppBar(
-        title: _appbarTitle,
+          appBar: get_appbar(),
+          drawer: get_drawer(),
+          body: Center(
+            child: _cards,
+          ),
+    );
+  }
+  AppBar get_appbar (){
+    return AppBar(
+        title: Text('Main'),
         centerTitle: true,
         actions: <Widget>[
           IconButton(
@@ -103,13 +126,11 @@ class _HomePageState extends State<HomePage> {
               print('Filter button');
             },
           ),
-        ],
-      ),
-      body: Center(
-        // child: _getCardView(context),
-        child: _getDrawerItemWidget(_selectedDrawerIndex),
-      ),
-      drawer: Drawer(
+    ],
+  );
+  }
+  Drawer get_drawer() {
+    return Drawer(
         child: Column(
           children: <Widget>[
             UserAccountsDrawerHeader(
@@ -117,8 +138,7 @@ class _HomePageState extends State<HomePage> {
             Column(children: drawerOptions)
           ],
         ),
-      ),
-    );
+      );
   }
 }
 
