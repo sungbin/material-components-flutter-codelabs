@@ -21,7 +21,7 @@ class _MyPageState extends State<MyPage> {
         title: Text("My Page"),
       ),
       body: Center(
-        child: CarouselSlider(
+        child: favorite_products.length == 0 ? Text('There is no favorite hotel',style: TextStyle(color: Colors.white),) : CarouselSlider(
           autoPlay: true,
           height: 250.0,
           items: favorite_products.map((product) {
